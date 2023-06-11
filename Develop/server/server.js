@@ -7,23 +7,22 @@ const resolvers = require('./schemas/resolvers');
 const { authMiddleware } = require('./utils/auth');
 
 const { ApolloServer } = require('apollo-server-express');
-const { ApolloServerPluginLandingPageGraphQLPlayground } = require('apollo-server-core');
+
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  introspection: true,
-  plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
+ 
   context: ({ req }) => {
     // Apply authentication middleware
-    authMiddleware(req);
+    var userId = authMiddleware(req);
 
     // Pass the authenticated user ID to the resolvers
     return {
-      userId: req.userId,
+      userId,
     };
   },
 

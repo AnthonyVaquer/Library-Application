@@ -13,12 +13,14 @@ module.exports = {
 
     try {
       const decodedToken = jwt.verify(token, secret);
-      req.userId = decodedToken.data._id;
+      return decodedToken.data._id;
     } catch (error) {
-      throw new Error('Invalid or expired token');
+      // throw new Error('Invalid or expired token');
+      return null
     }
   } else {
-    throw new Error('Authorization header not found');
+    // throw new Error('Authorization header not found');
+    return null
   }
   },
   signToken: function ({ username, email, _id }) {

@@ -5,6 +5,9 @@ const resolvers = {
   Query: {
     me: async (_,__,context) => {
       console.log(context);
+      if (!context.userId) {
+        throw new Error ("Invalid token.")
+      }
         const foundUser = await User.findById(context.userId);
           return foundUser;
     },
@@ -13,18 +16,25 @@ const resolvers = {
 
     login: async (parent, {email, password}) => {
       const user = await User.findOne({ $or: [{ email: email }] });
+      if (!user) {
+        throw new Error ("Email address does not exist.")
+      }
 
     const correctPw = await user.isCorrectPassword(password);
 
-    // if (!correctPw) {
-    //   return res.status(400).json({ message: 'Wrong password!' });
-    // }
+    if (!correctPw) {
+      throw new Error ("Wrong password.")
+    }
     const token = signToken(user);
     return ({ token, user });
     },
 
     addUser: async (parent, {username, email, password}) => {
-        const user = await User.create({username, email, password});
+      var emailUsed = await User.findOne({email})
+      if (emailUsed) {
+        throw new Error ("Email is already in use");
+      }
+    const user = await User.create({username, email, password});
     const token = signToken(user);
     return { token, user }
     },
