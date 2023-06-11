@@ -39,18 +39,24 @@ const resolvers = {
     return { token, user }
     },
 //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJuYW1lIjoiYW50aG9ueSIsImVtYWlsIjoiMTIzQGdtYWlsLmNvbSIsIl9pZCI6IjY0NzUwYWEwNTEyNjhlOWNlZmU5OWFlMCJ9LCJpYXQiOjE2ODUzOTIwMzMsImV4cCI6MTY4NTM5OTIzM30.JsZHTDaq6eh4iLh4RiY3Snn0fl1Q56SDpjRxYSdxBCE
-    saveBook: async (parent, {authors, descrption, title, bookId, image, link}) => {
+    saveBook: async (parent, {authors, description, title, bookId, image, link}, context) => {
+      if (!context.userId) {
+        throw new Error ("Invalid token.");
+      }
       const updatedUser = await User.findOneAndUpdate(
-        { _id: user._id },
-        { $addToSet: { savedBooks: body } },
+        { _id: context.userId },
+        { $addToSet: { savedBooks: {authors, description, title, bookId, image, link} } },
         { new: true, runValidators: true });
         return updatedUser;
     },
 
-    removeBook: async (parent, {bookId}) => {
+    removeBook: async (parent, {bookId}, context) => {
+      if (!context.userId) {
+        throw new Error ("invalid token")
+      }
       const updatedUser = await User.findOneAndUpdate(
-        { _id: user._id },
-        { $pull: { savedBooks: { bookId: params.bookId } } },
+        { _id: context.userId },
+        { $pull: { savedBooks: { bookId: bookId } } },
         { new: true });
       return updatedUser;
     }
