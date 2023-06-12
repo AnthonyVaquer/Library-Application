@@ -6,7 +6,7 @@ import Auth from '../utils/auth';
 import { SIGNUP_USER } from '../graphql/mutations';
 import { useMutation } from '@apollo/client';
 
-
+// signup new user
 const SignupForm = () => {
   const [signUpUser, {data, loading, error, reset}] = useMutation(SIGNUP_USER);
   // set initial form state
@@ -34,26 +34,20 @@ const SignupForm = () => {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
-    // check if form has everything (as per react-bootstrap docs)
+      // checks form inputs
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
     }
 
+    // catch block to catch error in login and run alrt
     try {
-      // const response = await createUser(userFormData);
-
-      // if (!response.ok) {
-      //   throw new Error('something went wrong!');
-      // }
+    
       signUpUser({variables: {
         ...userFormData
       }});
 
-      // const { token, user } = await response.json();
-      // console.log(user);
-      // Auth.login(token);
     } catch (err) {
       console.error(err);
       setShowAlert(true);

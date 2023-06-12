@@ -7,6 +7,8 @@ import Auth from "../utils/auth";
 import { LOGIN_USER } from "../graphql/mutations";
 import { useMutation } from "@apollo/client";
 
+
+// login user via LOGIN_USER mutation
 const LoginForm = () => {
   const [loginUser, { data, loading, error, reset }] = useMutation(LOGIN_USER);
   const [userFormData, setUserFormData] = useState({ email: "", password: "" });
@@ -30,26 +32,18 @@ const LoginForm = () => {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
-    // check if form has everything (as per react-bootstrap docs)
+    // checks form inputs
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
     }
-
+// catch block to catch error in login and run alrt
     try {
       loginUser({variables: {
         ...userFormData
       }});
-      // const response = await loginUser(userFormData);
-
-      // if (!response.ok) {
-      //   throw new Error("something went wrong!");
-      // }
-
-      // const { token, user } = await response.json();
-      // console.log(user);
-      // Auth.login(token);
+    
     } catch (err) {
       console.error(err);
       setShowAlert(true);
